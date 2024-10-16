@@ -1,15 +1,22 @@
 import styled from "styled-components";
 import Badge from '@mui/material/Badge';
-import { Search, ShoppingCartOutlined } from '@mui/icons-material';
+import {Search, ShoppingCartOutlined } from '@mui/icons-material';
+import {mobile} from "../responsive";
 
 
 const Container= styled.div`
 height:60px;
+${mobile({
+    height:"50px",
+})};
 `;
 const Wrapper=styled.div`
 padding:10px 20px;
 display:flex;
 justify-content:space-between;
+${mobile({
+    padding:"10px 0px",
+})};
 `;
 
 
@@ -21,6 +28,9 @@ flex:1;
 const Language=styled.span`
 font-size:14px;
 cursor:pointer;
+${mobile({
+    display:"none",
+})};
 `;
 const SearchContainer=styled.div`
  border : 0.5px solid gray;
@@ -31,6 +41,9 @@ const SearchContainer=styled.div`
 `;
 const Input=styled.input`
 border:none;
+${mobile({
+    width:"50px",
+})};
 `;
 
 
@@ -38,17 +51,35 @@ border:none;
 const Center=styled.div`
 flex:1
 text-align:center;`;
+
 const Logo=styled.h1`
-font-weight:600
+font-weight:600;
+${mobile({
+    fontSize:"24px",
+})};
 `;
+
 const Right=styled.div`
 display:flex;
 align-items:center;
 justify-content:flex-end;
-flex:1`;
+flex:1 ;
+${mobile({
+    justifyContent:"center",
+    flex:"2",
+})};
+
+`;
+
+
 const MenuItem=styled.div`
 font-size:14px;
 margin-left:25px;
+
+${mobile({
+    fontSize:"12px",
+    marginLeft:"10px",
+})};
 `;
 function Navbar(){
     return(
@@ -57,7 +88,7 @@ function Navbar(){
                 <Left>
                     <Language>EN</Language>
                     <SearchContainer>
-                        <Input/>
+                        <Input placeholder="search.."/>
                         <Search style={{color:"grey",fontSize:16}}/>
                     </SearchContainer>
                 </Left>

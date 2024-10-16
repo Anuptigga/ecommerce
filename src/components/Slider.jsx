@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { sliderItems } from "../data";
 import { useState } from "react";
+import {mobile} from "../responsive";
 
 
 const Container=styled.div`
@@ -10,6 +11,9 @@ width:100%;
 height:100vh;
 position:relative;
 overflow:hidden;
+${mobile({
+    height:"50vh",
+})};
 `;
 const Arrow=styled.div`
 height:50px;
@@ -41,6 +45,10 @@ height:100vh;
 display:flex;
 align-items:center;
 background-color: ${props=>props.bg};
+${mobile({
+    height:"50vh",
+    position:"relative",
+})};
 `;
 const ImgContainer=styled.div`
 height:100%;
@@ -48,24 +56,38 @@ flex:1;
 `;
 const Image=styled.img`
 height:80%;
+${mobile({
+    height:"100%",
+})};
 `;
 const InfoContainer=styled.div`
 flex:1;
 padding:50px;
+${mobile({
+    position:"absolute",
+})};
 `;
 const Title=styled.h1`
 font-size:70px;
+${mobile({
+    fontSize:"50px",
+})};
 `;
 const Desc=styled.p`
 margin:50px 0px;
 font-weight:500;
 font-size:20px;
 letter-spacing:3px;
+${mobile({
+    fontSize:"14px",
+    letterSpacing:"2px",
+})};
 `;
 const Button=styled.button`
 padding:10px;
 font-size:20px;
 background:transparent;
+border:2px solid black;
 cursor:pointer;
 `;
 
@@ -85,7 +107,7 @@ function Slider(){
                 <ChevronLeft/></Arrow>
             <Wrapper slideIndex={slideIndex}>
                 {sliderItems.map((item)=>(
-                    <Slide bg={item.bg}key={item.id}>
+                <Slide bg={item.bg}key={item.id}>
                 <ImgContainer>
                 <Image src={item.img}/>
                 </ImgContainer>
