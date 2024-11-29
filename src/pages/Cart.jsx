@@ -1,10 +1,15 @@
-import React from "react";
+import React,{useEffect, useState} from "react";
 import Navbar from "../components/Navbar";
 import Announcement from "../components/Announcement";
 import Footer from "../components/Footer";
 import styled from "styled-components";
 import { Add, Remove } from "@mui/icons-material";
 import {mobile} from "../responsive";
+import { useSelector } from "react-redux";
+import StripeCheckout from "react-stripe-checkout";
+import { userRequest} from "../requestMethods";
+import { useNavigate } from "react-router-dom";
+const  KEY=process.env.REACT_APP_STRIPE;
 
 const Container=styled.div`
 
@@ -162,6 +167,25 @@ const Button=styled.button`
 `;
 
 function Cart (){
+    const cart=useSelector(state=>state.cart);
+    const navigate= useNavigate();
+    const [stripeToken,setStripeToken]=useState(null);
+    const onToken=(token)=>{
+        setStripeToken(token);
+    };
+    useEffect(()=>{
+        const makeRequest =async ()=>{
+            try {
+                const res = await userRequest.post("/checkout/payment",{
+                    tokenId: stripeToken.id,
+                    amount:cart.total*100,
+                });
+                navigate("/success",{data:res.data})
+            } catch {   
+               }
+        }
+        stripeToken && cart.total>=1 && makeRequest();
+    },[stripeToken,cart.total,navigate]);
     return (
         <Container>
             <Navbar/>
@@ -178,55 +202,36 @@ function Cart (){
                 </Top>
                 <Bottom>
                     <Info>
-                        <Product>
+                        {cart.products.map(product=>(
+                            <Product>
                             <ProductDetail>
-                                <Image src={require("../assets/category3.jpg")}/>
+                                <Image src={product.img}/>
                                 <Details>
-                                    <ProductName><b>Product:</b>DRESS</ProductName>
-                                    <ProductId><b>ID:</b>928297559</ProductId>
-                                    <ProductColor color="orange"/>
-                                    <ProductSize><b>Size:</b>32</ProductSize>
+                                    <ProductName><b>Product:</b>{product.title}</ProductName>
+                                    <ProductId><b>ID:</b>{product._id}</ProductId>
+                                    <ProductColor color={product.color}/>
+                                    <ProductSize><b>Size:</b>{product.size}</ProductSize>
                                 </Details>
                             </ProductDetail>
                             <PriceDetails>
                                 <ProductAmountContainer>
                                     <Add/>
-                                    <ProductAmount>2</ProductAmount>
+                                    <ProductAmount>{product.quantity}</ProductAmount>
                                     <Remove/>
                                 </ProductAmountContainer>
                                 <ProductPrice>
-                                    Rs. 699
+                                   {product.price*product.quantity}
                                 </ProductPrice>
                             </PriceDetails>
                         </Product>
+                        ))}
                         <Hr/>
-                        <Product>
-                            <ProductDetail>
-                                <Image src={require("../assets/category1.jpg")}/>
-                                <Details>
-                                    <ProductName><b>Product:</b>NEW DRESS</ProductName>
-                                    <ProductId><b>ID:</b>928297564</ProductId>
-                                    <ProductColor color="black"/>
-                                    <ProductSize><b>Size:</b>M</ProductSize>
-                                </Details>
-                            </ProductDetail>
-                            <PriceDetails>
-                                <ProductAmountContainer>
-                                    <Add/>
-                                    <ProductAmount>2</ProductAmount>
-                                    <Remove/>
-                                </ProductAmountContainer>
-                                <ProductPrice>
-                                    Rs. 699
-                                </ProductPrice>
-                            </PriceDetails>
-                        </Product>
                     </Info>
                     <Summary>
                         <SummaryTitle>ORDER SUMMARY</SummaryTitle>
                         <SummaryItem>
                             <SummaryItemText>Subtotal</SummaryItemText>
-                            <SummaryItemPrice>Rs. 999</SummaryItemPrice>
+                            <SummaryItemPrice>Rs. {cart.total}</SummaryItemPrice>
                         </SummaryItem>
                         <SummaryItem>
                             <SummaryItemText>Estimated Shipping</SummaryItemText>
@@ -238,9 +243,21 @@ function Cart (){
                         </SummaryItem>
                         <SummaryItem type="total">
                             <SummaryItemText>Total</SummaryItemText>
-                            <SummaryItemPrice>Rs. 999</SummaryItemPrice>
+                            <SummaryItemPrice>Rs. {cart.total}</SummaryItemPrice>
                         </SummaryItem>
-                        <Button>CHECKOUT NOW</Button>
+
+                    <StripeCheckout
+                        name="LAMA Shop"
+                        image="https://cdn.pixabay.com/photo/2017/03/19/20/19/ball-2157465_1280.png"
+                        billingAddress
+                        shippingAddress
+                        description={`Your total is Rs.${cart.total}`}
+                        amount={cart.total*100}
+                        token={onToken}
+                        stripeKey={KEY}
+                    >
+                    <Button>CHECKOUT NOW</Button>
+                    </StripeCheckout>
                     </Summary>
                 </Bottom>
             </Wrapper>

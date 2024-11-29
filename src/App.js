@@ -4,11 +4,22 @@ import Cart from "./pages/Cart.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import ProductList from "./pages/ProductList.jsx";
+import {BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
+import Success from "./pages/Success.jsx";
 function App() {
+  const user=true;
   return (
-    <div>
-      <Home/>
-    </div>
+    <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<Home/>} />
+      <Route path="/products/:category" element={<ProductList/>} />
+      <Route path="/product/:id" element={<Product/>} />
+      <Route path="/cart" element={<Cart/>} />
+      <Route path="/login" element={user?<Navigate to="/"/> : <Login />} />
+      <Route path="/register" element={user? <Navigate to="/"/> : <Register/>} />
+      <Route path="/success" element={<Success/>}/>
+    </Routes>
+    </BrowserRouter>
   );
 }
 
